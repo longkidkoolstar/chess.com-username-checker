@@ -4,12 +4,11 @@ import colorama
 from colorama import Fore
 import time
 import threading
-from playsound import playsound  # Import playsound module for playing audio
-
+import pygame  # Replace playsound with pygame
 def check_username(username):
     url = f"https://www.chess.com/member/{username}"
     response = requests.get(url)
-    
+
     if response.status_code == 200:
         return f'{Fore.RED}username unavailable'
     elif response.status_code == 404:
@@ -17,10 +16,13 @@ def check_username(username):
     else:
         return f'unable to determine for {username} (status code: {response.status_code})'
 
-# Function to play audio in a separate thread
+# Function to play audio in a separate thread (using pygame)
 def play_audio():
-    playsound("audio.mp3")
-
+    pygame.mixer.init()
+    pygame.mixer.music.load("audio.mp3")  # Ensure audio.mp3 exists
+    pygame.mixer.music.play()
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.1)
 # Read usernames from 'usernames.txt'
 with open('usernames.txt', 'r') as file:
     usernames = [line.strip() for line in file.readlines()]
